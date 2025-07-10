@@ -3,8 +3,10 @@ import os
 
 DB_PATH = os.path.join(os.path.dirname(__file__), '../db/database.db')
 
+
 def get_connection():
     return sqlite3.connect(DB_PATH)
+
 
 def create_tables():
     """Create all necessary tables if they don’t exist."""
@@ -66,6 +68,7 @@ def create_tables():
     finally:
         conn.close()
 
+
 def insert_dummy_data():
     """Insert default users, categories, and products (if not already present)."""
     conn = get_connection()
@@ -93,6 +96,7 @@ def insert_dummy_data():
     finally:
         conn.close()
 
+
 def log_action(username, action, product_name):
     """Record an action in the logs table."""
     try:
@@ -109,6 +113,62 @@ def log_action(username, action, product_name):
     finally:
         if conn:
             conn.close()
+
+
+# 👤 User management helpers
+
+def get_all_users():
+    """Fetch all users (id, username, role)."""
+    conn = get_connection()
+    cursor = conn.cursor()
+    cursor.execute("SELECT id, username, role FROM users")
+    users = cursor.fetchall()
+    conn.close()
+    return users
+
+
+def add_user(username, password, role):
+    """Add a new user."""
+    conn = get_connection()
+    cursor = conn.cursor()
+    cursor.execute(
+        "INSERT INTO users (username, password, role) VALUES (?, ?, ?)",
+        (username, password, role)
+    )
+    conn.commit()
+    conn.close()
+
+
+def update_user(user_id, password=None, role=None):
+    """Update a user's password and/or role."""
+    conn = get_connection()
+    cursor = conn.cursor()
+    if password and role:
+        cursor.execute(
+            "UPDATE users SET password=?, role=? WHERE id=?",
+            (password, role, user_id)
+        )
+    elif password:
+        cursor.execute(
+            "UPDATE users SET password=? WHERE id=?",
+            (password, user_id)
+        )
+    elif role:
+        cursor.execute(
+            "UPDATE users SET role=? WHERE id=?",
+            (role, user_id)
+        )
+    conn.commit()
+    conn.close()
+
+
+def delete_user(user_id):
+    """Delete a user by id."""
+    conn = get_connection()
+    cursor = conn.cursor()
+    cursor.execute("DELETE FROM users WHERE id=?", (user_id,))
+    conn.commit()
+    conn.close()
 
 
 if __name__ == "__main__":
