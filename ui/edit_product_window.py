@@ -105,6 +105,9 @@ class EditProductWindow(QWidget):
         conn.commit()
         conn.close()
 
+        # Log it
+        db_manager.log_action("admin", "Edited", name)
+
         QMessageBox.information(self, "Success", "Product updated successfully.")
         self.parent.load_products()  # refresh products table
         self.close()

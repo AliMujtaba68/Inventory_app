@@ -47,6 +47,16 @@ def create_tables():
         FOREIGN KEY (product_id) REFERENCES products(id)
     )""")
 
+    # 🪵 New logs table
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS logs (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
+        username TEXT NOT NULL,
+        action TEXT NOT NULL,
+        product_name TEXT NOT NULL
+    )""")
+
     conn.commit()
     conn.close()
     print("✅ Tables created successfully.")
@@ -71,6 +81,18 @@ def insert_dummy_data():
     conn.commit()
     conn.close()
     print("✅ Dummy data inserted.")
+
+# 🪵 log_action() function
+def log_action(username, action, product_name):
+    conn = get_connection()
+    cursor = conn.cursor()
+    cursor.execute("""
+        INSERT INTO logs (username, action, product_name) 
+        VALUES (?, ?, ?)
+    """, (username, action, product_name))
+    conn.commit()
+    conn.close()
+    print(f"🪵 Log saved: {username} - {action} - {product_name}")
 
 if __name__ == "__main__":
     create_tables()

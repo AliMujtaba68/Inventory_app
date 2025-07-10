@@ -85,5 +85,8 @@ class AddProductWindow(QWidget):
         conn.commit()
         conn.close()
 
+        # 🔷 Log the addition
+        db_manager.log_action("admin", "Added", name)
+
         QMessageBox.information(self, "Success", "Product added successfully.")
         self.close()

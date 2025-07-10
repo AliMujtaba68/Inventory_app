@@ -88,7 +88,7 @@ class ViewProductsWindow(QWidget):
             delete_btn.setFixedSize(100, 30)
 
             edit_btn.clicked.connect(lambda _, pid=row_data[0]: self.edit_product(pid))
-            delete_btn.clicked.connect(lambda _, pid=row_data[0]: self.delete_product(pid))
+            delete_btn.clicked.connect(lambda _, pid=row_data[0]: self.delete_product(pid, row_data[1]))
 
             btn_layout.addWidget(edit_btn)
             btn_layout.addWidget(delete_btn)
@@ -101,7 +101,7 @@ class ViewProductsWindow(QWidget):
             # Ensure row is tall enough
             self.table.setRowHeight(row_idx, 40)
 
-    def delete_product(self, product_id):
+    def delete_product(self, product_id, product_name):
         confirm = QMessageBox.question(
             self,
             "Confirm Delete",
@@ -115,6 +115,9 @@ class ViewProductsWindow(QWidget):
             cursor.execute("DELETE FROM products WHERE id=?", (product_id,))
             conn.commit()
             conn.close()
+
+            # Log it
+            db_manager.log_action("admin", "Deleted", product_name)
 
             QMessageBox.information(self, "Deleted", "Product deleted successfully.")
             self.load_products()

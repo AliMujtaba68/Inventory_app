@@ -4,8 +4,7 @@ from PyQt5.QtWidgets import (
 
 from ui.view_products_window import ViewProductsWindow
 from ui.add_product_window import AddProductWindow
-
-
+from ui.view_logs_window import ViewLogsWindow
 
 
 class DashboardWindow(QWidget):
@@ -50,7 +49,8 @@ class DashboardWindow(QWidget):
         self.add_product_window.show()
 
     def view_logs(self):
-        QMessageBox.information(self, "View Inventory Logs", "This will show inventory logs.")
+        self.logs_window = ViewLogsWindow()
+        self.logs_window.show()
 
     def logout(self):
         QMessageBox.information(self, "Logout", "Logging out…")
