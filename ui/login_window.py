@@ -55,8 +55,9 @@ class LoginWindow(QWidget):
         conn.close()
 
         if user:
-            # Login successful → open dashboard
-            self.dashboard = DashboardWindow(username)
+            # Login successful → open dashboard with role
+            role = user[3]  # id, username, password, role
+            self.dashboard = DashboardWindow(username, role)
             self.dashboard.show()
             self.close()
         else:
