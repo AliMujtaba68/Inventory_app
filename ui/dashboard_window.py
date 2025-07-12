@@ -7,6 +7,8 @@ from ui.add_product_window import AddProductWindow
 from ui.view_logs_window import ViewLogsWindow
 from ui.manage_users_window import ManageUsersWindow  # 👥 new import
 
+from models.backup_restore import backup_database, restore_database  # 💾 new import
+
 
 class DashboardWindow(QWidget):
     def __init__(self, username, role='user'):
@@ -28,6 +30,8 @@ class DashboardWindow(QWidget):
         self.add_product_btn = QPushButton("➕ Add Product")
         self.view_logs_btn = QPushButton("📊 View Inventory Logs")
         self.manage_users_btn = QPushButton("👥 Manage Users")  # 👥 new button
+        self.backup_btn = QPushButton("💾 Backup Database")      # 💾 new button
+        self.restore_btn = QPushButton("♻️ Restore Database")   # ♻️ new button
         self.logout_btn = QPushButton("🚪 Logout")
 
         # Connect buttons to handlers
@@ -35,6 +39,8 @@ class DashboardWindow(QWidget):
         self.add_product_btn.clicked.connect(self.add_product)
         self.view_logs_btn.clicked.connect(self.view_logs)
         self.manage_users_btn.clicked.connect(self.manage_users)  # 👥 connect
+        self.backup_btn.clicked.connect(self.backup_db)           # 💾 connect
+        self.restore_btn.clicked.connect(self.restore_db)         # ♻️ connect
         self.logout_btn.clicked.connect(self.logout)
 
         # Add buttons to layout
@@ -45,6 +51,11 @@ class DashboardWindow(QWidget):
         # 👥 only show Manage Users if admin
         if self.role == 'admin':
             layout.addWidget(self.manage_users_btn)
+
+        # 💾 backup & restore available to admin only
+        if self.role == 'admin':
+            layout.addWidget(self.backup_btn)
+            layout.addWidget(self.restore_btn)
 
         layout.addWidget(self.logout_btn)
 
@@ -66,6 +77,12 @@ class DashboardWindow(QWidget):
     def manage_users(self):
         self.users_window = ManageUsersWindow()
         self.users_window.show()
+
+    def backup_db(self):
+        backup_database(self)
+
+    def restore_db(self):
+        restore_database(self)
 
     def logout(self):
         QMessageBox.information(self, "Logout", "Logging out…")
